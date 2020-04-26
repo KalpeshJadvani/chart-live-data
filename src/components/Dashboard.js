@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Container, Row, Col, Spinner, Card } from 'react-bootstrap';
-import SelectBox from './SelectBox';
-import CountryData from './CountryData';
+import { Container, Spinner, Card } from 'react-bootstrap';
+import ContainerBody from './ContainerBody';
+import Header from './Header';
 class Dashboard extends Component {
   constructor() {
     super();
@@ -22,21 +22,25 @@ class Dashboard extends Component {
   componentDidMount() {
     this.getData();
   }
+  getWorldStats(countryArr, data) {
+    const worldStats = { confirmed: 0, recovered: 0, deaths: 0 };
+    countryArr.forEach((country) => {
+      let countryData = data[country];
+      // pick last object for today data
+      countryData = countryData[countryData.length - 1];
+      worldStats.confirmed += countryData.confirmed;
+      worldStats.recovered += countryData.recovered;
+      worldStats.deaths += countryData.deaths;
+    });
+    return worldStats;
+  }
 
   getData() {
     fetch('https://pomber.github.io/covid19/timeseries.json')
       .then((response) => response.json())
       .then((data) => {
-        const worldStats = { confirmed: 0, recovered: 0, deaths: 0 };
         const countryArr = Object.keys(data).map((i) => i);
-        countryArr.forEach((country) => {
-          let countryData = data[country];
-          // pick last object for today data
-          countryData = countryData[countryData.length - 1];
-          worldStats.confirmed += countryData.confirmed;
-          worldStats.recovered += countryData.recovered;
-          worldStats.deaths += countryData.deaths;
-        });
+        const worldStats = this.getWorldStats(countryArr, data);
         // world data
         const worldChart = [];
         const dateArr = [];
@@ -81,8 +85,7 @@ class Dashboard extends Component {
     this.showDataOnDashboard(date, selectedCountry);
   }
 
-  // This is common function for filter data by country name and date
-  showDataOnDashboard(date, selectedCountry) {
+  getFilterData(date, selectedCountry) {
     const { data, countryArr } = this.state;
     const worldStats = { confirmed: 0, recovered: 0, deaths: 0 };
     // return array of countries
@@ -103,6 +106,12 @@ class Dashboard extends Component {
       });
     });
 
+    return worldStats;
+  }
+
+  // This is common function for filter data by country name and date
+  showDataOnDashboard(date, selectedCountry) {
+    const worldStats = this.getFilterData(date, selectedCountry);
     this.setState({
       selectedDate: date,
       selectedCountry: selectedCountry,
@@ -116,9 +125,6 @@ class Dashboard extends Component {
       selectedCountry,
       data,
       worldChart,
-      selectedDate,
-      countryArr,
-      dateArr,
     } = this.state;
 
     if (loading)
@@ -129,70 +135,25 @@ class Dashboard extends Component {
       <Container fluid style={{ padding: '0' }} className="App">
         <Card style={{ backgroundColor: '#f8f8ff', margin: '20px' }}>
           {/*Header starts here */}
-          <Card.Title
-            style={{
-              textAlign: 'left',
-              paddingLeft: '20px',
-              paddingTop: '20px',
-            }}
-          >
-            Summary (Refreshed daily) - See JHU CSSE live dashboard below for
-            today's latest data
-          </Card.Title>
-
-          <Row className="no-gutters">
-            {/*Select Box for country search ends here */}
-            <Col
-              md={{ span: 0, offset: 0 }}
-              style={{ marginLeft: '18px', marginRight: '5px' }}
-            >
-              <span className="list-label">Country : </span>
-            </Col>
-            <SelectBox
-              mdSet={{ span: 3, offset: 0 }}
-              preSelcted={'All'}
-              onChangeFunction={this.onChangeCountry}
-              array={countryArr}
-              selectedValue={selectedCountry}
-            />
-
-            <Col
-              md={{ span: 0, offset: 0 }}
-              style={{ marginLeft: '18px', marginRight: '5px' }}
-            >
-              <span className="list-label">As of date : </span>
-            </Col>
-            <SelectBox
-              mdSet={{ span: 2, offset: 0 }}
-              preSelcted={'Latest'}
-              onChangeFunction={this.onChangeDate}
-              array={dateArr}
-              selectedValue={selectedDate}
-            />
-          </Row>
-
-          <Row className="no-gutters">
-            <Col className="large-x-small">{worldStats.confirmed}</Col>
-            <Col className="large-x-small">{worldStats.deaths}</Col>
-            <Col className="large-x-small">{worldStats.recovered}</Col>
-          </Row>
-
-          <Row className="no-gutters">
-            <Col className="size-x-small">Confirmed</Col>
-            <Col className="size-x-small">Deaths</Col>
-            <Col className="size-x-small">Recovered</Col>
-          </Row>
-
+          <Header
+            {...this.state}
+            worldStats={worldStats}
+            onChangeDate={this.onChangeDate}
+            onChangeCountry={this.onChangeCountry}
+          />
           {/*Header ends here */}
 
           <Container fluid>
             {selectedCountry ? (
-              <CountryData
+              <ContainerBody
                 stats={countryStats}
                 selectedCountry={selectedCountry}
               />
             ) : (
-              <CountryData stats={worldChart} selectedCountry={'Global Data'} />
+              <ContainerBody
+                stats={worldChart}
+                selectedCountry={'Global Data'}
+              />
             )}
           </Container>
         </Card>

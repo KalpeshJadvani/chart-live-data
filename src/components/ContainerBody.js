@@ -2,8 +2,7 @@ import React from 'react';
 import Charts from './Charts';
 import { Container } from 'react-bootstrap';
 
-function CountryData(props) {
-  // world data having arrays for dates, confirmed, recovered,active and deaths
+function ContainerBody(props) {
   const chartData = props.stats;
   const selectedCountry = props.selectedCountry;
   return (
@@ -20,4 +19,4 @@ function CountryData(props) {
   );
 }
 
-export default CountryData;
+export default ContainerBody;
