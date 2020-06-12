@@ -4,31 +4,19 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 In the project directory, you can run:
 
-### `npm start`
+## Available Scripts
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+In the project directory, you can run:
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+Step1: npm install
+Step2: npm run startapp
+Step3: open the url http://localhost:3000/ in chrome browser.
 
-### `npm test`
+Now, this app test on only chrome browser.
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+if you want to buld and run on the local server then
+Step1: npm build
+Step1: npm start
+Step3: open the url http://localhost:8080/ in chrome browser.
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+Live: https://chart-live-data.herokuapp.com/
